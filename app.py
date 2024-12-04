@@ -102,7 +102,7 @@ def save_to_csv(data, output_path, input_filename):
         "Name of beneficiary": [data.get("Name of beneficiary", "")],
         "Record No.": [data.get("Record No.", "")],
         "Date of document": [convert_to_ddmmyyyy_format(data.get("Date", ""))],
-        "Mobile": [data.get("Mobile", "")],
+        "Mobile": [data.get("Mobile", "").replace(",", "")],  # Ensure no commas in Mobile
     }
     df = pd.DataFrame(formatted_data)
     
