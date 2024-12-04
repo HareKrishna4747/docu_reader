@@ -72,7 +72,8 @@ def extract_text_from_image(image, field_positions):
         text = " ".join([item[1] for item in result])
 
         if field_name == "Mobile":
-            text = improve_number_detection(text)
+            text = improve_number_detection(text)  # Ensure mobile number is correct
+            text = text.replace(",", "")  # Remove commas from mobile numbers
         if field_name == "Date":
             text = correct_ocr_date(text)
             text = convert_to_ddmmyyyy_format(text)
@@ -81,9 +82,20 @@ def extract_text_from_image(image, field_positions):
 
     return extracted_data
 
-def save_to_csv(data, output_path):
-    df = pd.DataFrame([data])
-    df.to_csv(output_path, index=False)
+def save_to_csv(data, output_path, input_filename):
+    # Adding 'Sr.No.' and 'Filename' to the data
+    data_with_sr_and_filename = {
+        "Sr.No.": [1],
+        "Filename": [input_filename],
+        "Name of beneficiary": [data.get("Name of beneficiary", "")],
+        "Record No.": [data.get("Record No.", "")],
+        "Date of document": [data.get("Date", "")],
+        "Mobile": [data.get("Mobile", "")]
+    }
+    
+    # Create DataFrame and save to CSV
+    df = pd.DataFrame(data_with_sr_and_filename)
+    df.to_csv(output_path, index=False, mode='w', header=True)
 
 # Streamlit UI
 def main():
@@ -106,7 +118,7 @@ def main():
 
         # Save extracted data as CSV
         output_csv = "extracted_data.csv"
-        save_to_csv(extracted_data, output_csv)
+        save_to_csv(extracted_data, output_csv, uploaded_image.name)
 
         with open(output_csv, "rb") as file:
             st.download_button(
