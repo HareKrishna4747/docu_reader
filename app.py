@@ -87,11 +87,11 @@ def extract_text_from_image(image_path, field_positions):
 
 # Function to improve number extraction for mobile numbers
 def improve_number_detection(extracted_text):
-    digits_only = re.sub(r'\D', '', extracted_text)
+    digits_only = re.sub(r'\D', '', extracted_text)  # Keep only digits
 
     if len(digits_only) < 10:
         digits_only = '8' + digits_only  # Assuming '8' as the prefix for India
-    return digits_only
+    return digits_only 
 
 # Save extracted data to CSV
 def save_to_csv(data, output_path, input_filename):
