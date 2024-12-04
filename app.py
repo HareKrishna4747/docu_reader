@@ -4,6 +4,7 @@ from PIL import Image
 import easyocr
 import re
 import pandas as pd
+import os
 
 # Define input and output file paths
 input_image = "path/to/your/image.jpg"  # Replace with your image file path
