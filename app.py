@@ -88,6 +88,15 @@ def save_to_csv(data, output_path):
 # Streamlit UI
 def main():
     st.title("Document Reader with OCR")
+    st.warning("""
+    **Important Notice:**
+    
+    Please convert your PDF to JPG format using the following tool:  
+    [https://www.ilovepdf.com/pdf_to_jpg](https://www.ilovepdf.com/pdf_to_jpg)
+    
+    **Only JPG images are accepted!**  
+    Make sure your file is in JPG format before uploading. Any other format will not be processed.
+    """)
     st.write("Upload an image to extract key information.")
 
     uploaded_image = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
