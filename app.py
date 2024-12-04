@@ -87,8 +87,10 @@ def save_to_csv(data, output_path):
 
 # Streamlit UI
 def main():
-    st.title("Document Reader with OCR")
-        st.warning("""
+    st.title("Document OCR Extraction")
+
+    # Display strong message to the user
+    st.warning("""
     **Important Notice:**
     
     Please convert your PDF to JPG format using the following tool:  
@@ -97,34 +99,22 @@ def main():
     **Only JPG images are accepted!**  
     Make sure your file is in JPG format before uploading. Any other format will not be processed.
     """)
-    st.write("Upload an image to extract key information.")
 
-    uploaded_image = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader("Choose a JPG file", type=["jpg", "jpeg"])
 
-    if uploaded_image:
-        image = Image.open(uploaded_image)
-        filename = uploaded_image.name
-        st.image(image, caption=f"Uploaded Image: {filename}", use_column_width=True)
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        st.image(image, caption='Uploaded Image', use_column_width=True)
 
-        # Process the image
-        with st.spinner("Processing the image..."):
-            extracted_data = extract_text_from_image(image, FIELD_POSITIONS, filename)
+        # Process the image and generate output CSV
+        extracted_data = extract_text_from_image(uploaded_file, FIELD_POSITIONS)
+        st.write(extracted_data)
 
-        st.success("Extraction completed!")
-        st.write("Extracted Data:")
-        st.json(extracted_data)
+        # Save the extracted data to CSV
+        save_to_csv(extracted_data, output_csv, uploaded_file.name)
 
-        # Save extracted data as CSV
-        output_csv = "extracted_data.csv"
-        save_to_csv(extracted_data, output_csv)
+        st.success(f"Data has been successfully extracted and saved to {output_csv}")
 
-        with open(output_csv, "rb") as file:
-            st.download_button(
-                label="Download CSV",
-                data=file,
-                file_name="extracted_data.csv",
-                mime="text/csv"
-            )
-
+# Run the Streamlit app
 if __name__ == "__main__":
     main()
