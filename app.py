@@ -4,6 +4,7 @@ from PIL import Image
 import pytesseract
 import easyocr
 import re
+import numpy as np
 
 # Define regions for OCR (x1, y1, x2, y2)
 FIELD_POSITIONS = {
@@ -17,6 +18,10 @@ FIELD_POSITIONS = {
 reader = easyocr.Reader(['en'])
 
 # Helper functions
+def pil_to_np_array(pil_image):
+    """Convert a PIL Image to a NumPy array."""
+    return np.array(pil_image)
+
 def correct_ocr_date(ocr_output):
     corrections = {
         "O": "0", "I": "1", "l": "1", "Z": "2", "S": "5", "B": "8", "G": "6", 
@@ -62,7 +67,8 @@ def extract_text_from_image(image, field_positions):
 
     for field_name, coords in field_positions.items():
         cropped_region = image.crop(coords)
-        result = reader.readtext(cropped_region)  # OCR for the region
+        cropped_np = pil_to_np_array(cropped_region)  # Convert to NumPy array
+        result = reader.readtext(cropped_np)  # OCR for the region
         text = " ".join([item[1] for item in result])
 
         if field_name == "Mobile":
