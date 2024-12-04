@@ -62,8 +62,8 @@ def improve_number_detection(extracted_text):
         digits_only = '8' + digits_only
     return digits_only
 
-def extract_text_from_image(image, field_positions):
-    extracted_data = {}
+def extract_text_from_image(image, field_positions, filename):
+    extracted_data = {"File Name": filename}
 
     for field_name, coords in field_positions.items():
         cropped_region = image.crop(coords)
@@ -94,11 +94,12 @@ def main():
 
     if uploaded_image:
         image = Image.open(uploaded_image)
-        st.image(image, caption="Uploaded Image", use_column_width=True)
+        filename = uploaded_image.name
+        st.image(image, caption=f"Uploaded Image: {filename}", use_column_width=True)
 
         # Process the image
         with st.spinner("Processing the image..."):
-            extracted_data = extract_text_from_image(image, FIELD_POSITIONS)
+            extracted_data = extract_text_from_image(image, FIELD_POSITIONS, filename)
 
         st.success("Extraction completed!")
         st.write("Extracted Data:")
