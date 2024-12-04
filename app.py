@@ -95,6 +95,9 @@ def improve_number_detection(extracted_text):
 
 # Save extracted data to CSV
 def save_to_csv(data, output_path, input_filename):
+    # Check if the file already exists
+    file_exists = os.path.isfile(output_path)
+
     # Create a DataFrame with the required column order and 'Sr.No.' as the index
     formatted_data = {
         "Sr.No.": [1],
@@ -102,12 +105,14 @@ def save_to_csv(data, output_path, input_filename):
         "Name of beneficiary": [data.get("Name of beneficiary", "")],
         "Record No.": [data.get("Record No.", "")],
         "Date of document": [convert_to_ddmmyyyy_format(data.get("Date", ""))],
-        "Mobile": [data.get("Mobile", "").replace(",", "")],  # Ensure no commas in Mobile
+        "Mobile": [data.get("Mobile", "")],
     }
-    df = pd.DataFrame(formatted_data)
     
-    # Append to CSV, creating the file if it doesn't exist
-    df.to_csv(output_path, mode='a', header=not pd.io.common.file_exists(output_path), index=False)
+    df = pd.DataFrame(formatted_data)
+
+    # If file already exists, append without writing the header
+    # If the file doesn't exist, write the header
+    df.to_csv(output_path, mode='w' if not file_exists else 'a', header=not file_exists, index=False)
 
 # Streamlit app to handle file input
 def main():
